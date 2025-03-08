@@ -29,7 +29,19 @@ pub fn main() !void {
     }
     const input_file_path = maybe_input_file orelse fail("expected input file", .{});
 
-    var ast = try Ast.parse(allocator, input_file_path);
+    const input = try std.fs.cwd().openFile(input_file_path, .{});
+    defer input.close();
+
+    const source = try input.readToEndAllocOptions(
+        gpa,
+        1024 * 1024,
+        null,
+        @alignOf(u8),
+        0,
+    );
+    defer allocator.free(source);
+
+    var ast = try Ast.parse(allocator, source);
     defer ast.deinit(allocator);
 
     if (ast.errors.len != 0) {
