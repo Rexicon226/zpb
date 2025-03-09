@@ -300,3 +300,16 @@ pub const Error = struct {
         }
     }
 };
+
+fn testParse(_: void, input: []const u8) !void {
+    const allocator = std.testing.allocator;
+    const null_source = try allocator.dupeZ(u8, input);
+    defer allocator.free(null_source);
+
+    var parsed = try Ast.parse(allocator, null_source, "fuzz");
+    defer parsed.deinit(allocator);
+}
+
+test "fuzz parser" {
+    try std.testing.fuzz({}, testParse, .{});
+}

@@ -31,10 +31,6 @@ fn testRender(source: [:0]const u8) !void {
     );
 }
 
-// test "empty" {
-//     try testRender("");
-// }
-
 test "only syntax" {
     try testRender(
         \\syntax = "proto3";
