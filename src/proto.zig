@@ -16,12 +16,17 @@ pub const Version = enum {
 
 pub const Type = enum {
     uint32,
+    uint64,
+    bool,
     bytes,
 
     /// See: https://protobuf.dev/programming-guides/encoding/#structure
     pub fn wireType(t: Type) WireType {
         return switch (t) {
-            .uint32 => .varint,
+            .uint32,
+            .uint64,
+            .bool,
+            => .varint,
             .bytes => .len,
         };
     }

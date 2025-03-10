@@ -33,7 +33,7 @@ pub fn main() !void {
     defer input.close();
 
     const source = try input.readToEndAllocOptions(
-        gpa,
+        allocator,
         1024 * 1024,
         null,
         @alignOf(u8),
@@ -41,7 +41,7 @@ pub fn main() !void {
     );
     defer allocator.free(source);
 
-    var ast = try Ast.parse(allocator, source);
+    var ast = try Ast.parse(allocator, source, input_file_path);
     defer ast.deinit(allocator);
 
     if (ast.errors.len != 0) {
@@ -176,7 +176,9 @@ const Writer = struct {
 
     fn printType(ty: proto.Type, stream: anytype) !void {
         const name = switch (ty) {
+            .uint64 => "u64",
             .uint32 => "u32",
+            .bool => "bool",
             .bytes => "[]const u8",
         };
         try stream.writeAll(name);

@@ -59,7 +59,11 @@ const Writer = struct {
         value: anytype,
     ) !void {
         switch (fd.field_type) {
-            .uint32 => {
+            .bool => {
+                try w.encodeTag(fd);
+                try w.encodeVarInt(@intFromBool(value));
+            },
+            .uint32, .uint64 => {
                 try w.encodeTag(fd);
                 try w.encodeVarInt(value);
             },
